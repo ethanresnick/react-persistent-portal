@@ -60,40 +60,64 @@ class PortalWithUnmountCallback extends Portal {
   }
 }
 
-export default (props) => {
-  // Note that below we don't pass through to the portal the onClose prop
-  // or the existingWrapperClassName, instaed replacing them with undefined.
-  // This is because the class name is applied to the children and onClose is
-  // used in beforeClose.
-  return (
-    <PortalWithUnmountCallback
-      {...props}
-      isOpened={true}
-      componentWillUnmount={(resetPortalState) => {
-        resetPortalState();
-      }}
-      beforeClose={(portalDomNode, resetPortalState) => {
-        // Because the portal is technically now always "open", there are tons
-        // of cases where the child will attempt to close it, when its already
-        // "closed". E.g., because every click outside an open portal closes it
-        // (if it's so configured), every click on a PersistentModal could
-        // trigger a closePortal call. While we're never removing the portal
-        // node from the DOM (which we'd do by calling resetPortalState), we
-        // also shouldn't call the user's provided onClose either in these cases.
-        if(props.isOpened && typeof props.onClose == "function") {
-          props.onClose();
-        }
-      }}
-      existingWrapperClassName={undefined}
-      onClose={undefined}
-      >
-        {React.Children.only(
-          React.cloneElement(props.children, {
-            className: classnames(props.existingWrapperClassName, 'persistent-portal', {
-              'persistent-portal--open': props.isOpened
+export default class PersistentPortal extends React.Component {
+  constructor(props) {
+    super(props);
+    this.portalComponent;
+  }
+
+  // call onOpen ourselves at more select times to account
+  // for the fact that the portal is always technically open.
+  componentDidMount() {
+    if(this.props.isOpened && this.props.onOpen) {
+      this.props.onOpen(this.portalComponent && this.portalComponent.node);
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.isOpened && !this.props.isOpened && nextProps.onOpen) {
+      nextProps.onOpen(this.portalComponent && this.portalComponent.node);
+    }
+  }
+
+  render() {
+    // Note that below we don't pass through to the portal the onClose, onOpen,
+    // or the existingWrapperClassName props, instead sending in undefined.
+    // For onOpen and onClose, this is because we call them ourselves at select
+    // times and don't want the library to call them too. And for the className
+    // prop, it's because we also apply it manually.
+    return (
+      <PortalWithUnmountCallback
+        {...this.props}
+        isOpened={true}
+        ref={(it) => { this.portalComponent = it; }}
+        componentWillUnmount={(resetPortalState) => {
+          resetPortalState();
+        }}
+        beforeClose={(portalDomNode, resetPortalState) => {
+          // Because the portal is technically now always "open", there are tons
+          // of cases where the child will attempt to close it, when its already
+          // "closed". E.g., because every click outside an open portal closes it
+          // (if it's so configured), every click on a PersistentModal could
+          // trigger a closePortal call. While we're never removing the portal
+          // node from the DOM (which we'd do by calling resetPortalState), we
+          // also shouldn't call the user's provided onClose either in these cases.
+          if(this.props.isOpened && typeof this.props.onClose == "function") {
+            this.props.onClose();
+          }
+        }}
+        existingWrapperClassName={undefined}
+        onClose={undefined}
+        onOpen={undefined}
+        >
+          {React.Children.only(
+            React.cloneElement(this.props.children, {
+              className: classnames(this.props.existingWrapperClassName, 'persistent-portal', {
+                'persistent-portal--open': this.props.isOpened
+              })
             })
-          })
-        )}
-    </PortalWithUnmountCallback>
-  );
+          )}
+      </PortalWithUnmountCallback>
+    );
+  }
 }
