@@ -1,0 +1,26 @@
+{
+  "name": "react-persistent-portal",
+  "version": "1.0.0",
+  "description": "Extends react-portal to keep the portal in the DOM longer (for CSS animations)",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "babel src -d lib",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ethan Resnick <ethan.resnick@gmail.com>",
+  "license": "ISC",
+  "peerDependencies": {
+    "react-portal": "^3.0.0",
+    "react": "^15.4.1",
+    "react-dom": "^15.4.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-preset-latest": "^6.16.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-preset-stage-3": "^6.17.0"
+  },
+  "dependencies": {
+    "classnames": "^2.2.5"
+  }
+}
