@@ -1,6 +1,6 @@
 {
   "name": "react-persistent-portal",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Extends react-portal to keep the portal in the DOM longer (for CSS animations)",
   "main": "lib/index.js",
   "scripts": {
