@@ -60,6 +60,17 @@ class PortalWithUnmountCallback extends Portal {
   }
 }
 
+// Support browsers that don't support __proto__, namely IE 9/10.
+// In these browsers, babel can't have PortalWithUnmountCallback automatically
+// inherit Portal's static props, so we manually copy them over.
+if(!({ __proto__: [] } instanceof Array)) {
+  Object.keys(Portal).forEach((key) => {
+    if(key !== '__proto__') {
+      PortalWithUnmountCallback[key] = Portal[key];
+    }
+  });
+}
+
 export default class PersistentPortal extends React.Component {
   constructor(props) {
     super(props);
