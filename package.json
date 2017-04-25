@@ -10,7 +10,7 @@
   "author": "Ethan Resnick <ethan.resnick@gmail.com>",
   "license": "ISC",
   "peerDependencies": {
-    "react-portal": "^3.0.0",
+    "react-portal": "^3.1.0",
     "react": "^15.4.1",
     "react-dom": "^15.4.1"
   },
